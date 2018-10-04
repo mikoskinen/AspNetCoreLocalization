@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using Microsoft.Extensions.Options;
 using Localization.SqlLocalizer.DbStringLocalizer;
-using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 
 namespace AspNetCoreLocalization
 {
@@ -67,16 +65,9 @@ namespace AspNetCoreLocalization
             // services.AddSqlLocalization(options => options.ReturnOnlyKeyIfNotFound = true);
             // services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            services.AddMvc()
                 .AddViewLocalization()
-                .AddDataAnnotationsLocalization(options =>
-                {
-                    options.DataAnnotationLocalizerProvider = (type, factory) =>
-                    {
-                        var assemblyName = new AssemblyName(typeof(SharedResource).GetTypeInfo().Assembly.FullName);
-                        return factory.Create("SharedResource", assemblyName.Name);
-                    };
-                });
+                .AddDataAnnotationsLocalization();
 
             services.AddScoped<LanguageActionFilter>();
 
@@ -107,12 +98,7 @@ namespace AspNetCoreLocalization
 
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
         }
     }
 }
